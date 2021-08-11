@@ -1,6 +1,10 @@
 # AI API for dartflex
 ## Version: 1.0.0
 
+Current base_url: 35.225.12.159:5050  
+  
+[Project swagger](http://35.225.12.159:5050/apidocs/) 
+
 ### /ping
 
 #### GET
@@ -12,112 +16,65 @@ Send a ping to test the application
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | OK<br><br>**Example** (*status*):<br><pre>pong</pre> |
+| 200 | OK<br><br>**Example**<br><pre>{"status": "pong"}</pre> |
 
-### /generate_image
+### /style_transfer
 
 #### POST
 ##### Summary
 
-Generate new image
+Upload style and content image to get mixed result
 
 ##### Parameters
 
-| Name | Located in | Description | Required | Schema |
+| Name | Located in | Type | Description | Required |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | JSON parameters. | No |  |
+| content_image | formData | file | The content image file with to upload | Yes |
+| style_image | formData | file | The style image file with to upload | Yes |
+| priority | query | integer | Task priority in queue from 0 (lowest priority) to 10 (highest). Default 0 | No |
+| end_scale | query | integer | Scale result image to this resolution. Default 512 | No |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON response with base64 encoded 'image' and 'latent' fields. |
+| 200 | JSON response with 'task_id', 'status' and 'result' of new long-running task<br><br>**Example**<br><pre>{"result": null, "status": "PENDING", "task_id": "cb21d88f-0a28-4cc1-b0dc-a42b12aa8d17"}</pre> |
 
-### /edit_image
+### /style_transfer/result/<task_id>/status_only
 
-#### POST
+#### GET
 ##### Summary
 
-Generate new image based on existing one
+Get status of result by task_id
 
 ##### Parameters
 
-| Name | Located in | Description | Required | Schema |
+| Name | Located in | Type | Description | Required |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | JSON parameters. | No |  |
+| task_id | path | string | The task ID | Yes |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON response with base64 encoded 'image' and 'latent' fields of new image |
+| 200 | JSON response with 'task_id' and 'status' of this long-running task<br><br>**Example**<br><pre>{"status": "PENDING", "task_id": "cb21d88f-0a28-4cc1-b0dc-a42b12aa8d17"}</pre> |
 
-### /child
+### /style_transfer/result/<task_id>/image_only
 
-#### POST
+#### GET
 ##### Summary
 
 Generates a new image through random mutation of an existing one
 
 ##### Parameters
 
-| Name | Located in | Description | Required | Schema |
+| Name | Located in | Type | Description | Required |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | JSON parameters. | No |  |
+| task_id | path | string | The task ID | Yes |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | JSON response with base64 encoded 'image' and 'latent' fields of new image |
-
-### /crossbreed
-
-#### POST
-##### Summary
-
-Generates a new image using a crossbreed of the existing two
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| body | body | JSON parameters. | No |  |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | JSON response with base64 encoded 'image' and 'latent' fields of new image |
-
-### /project/upload
-
-#### POST
-##### Summary
-
-Upload own image to get its projection for editing, creating children or crossbreeding
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| image | formData | The image file to upload. | No | file |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | JSON response with id of the long-running task and its current status |
-
-### /project/result/{task_id}
-
-#### GET
-##### Summary
-
-Get upload projection result by task_id
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | JSON response with id of the long-running task and its current status |
+| 200 | "image/jpeg" message of jpeg image file  |
+| 404 | Empty response if image result is not ready or error has been occurred |
