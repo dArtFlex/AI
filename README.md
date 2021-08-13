@@ -1,9 +1,9 @@
 # AI API for dartflex
 ## Version: 1.0.0
 
-Current base_url: 35.225.12.159:5050  
+Current base_url: api.nft.inga.technology
   
-[Project swagger](http://35.225.12.159:5050/apidocs/) 
+[Project swagger](https://api.nft.inga.technology/apidocs/) 
 
 ### /ping
 
